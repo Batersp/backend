@@ -1,37 +1,26 @@
-let http = require('http');
-let {usersController} = require('./usersController')
+const express = require('express')
+const users = require('./users-router')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const app = express()
 
-process.on('unhandledRejection', function (reason, p) {
-    console.log(reason,p)
+app.use(cors())
+
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
+
+app.use('/users', users)
+
+app.get('/tasks', async (req, res) => {
+    res.send("tasks")
 })
 
-let cors = (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Request-Method', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-    res.setHeader('Access-Control-Allow-Headers', '*');
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        res.end();
-        return true;
-    } else {
-        return false
-    }
-}
+app.use((req, res) => {
+    res.send(404)
+})
 
-let server = http.createServer((req, res) => {
-    console.log('req')
-    if (cors(req, res)) return
-    switch (req.url) {
-        case '/users':
-            usersController(req, res)
-            break
-        case '/lessons':
-            res.write('TASKS')
-            break
-        default:
-            res.write('Page NOT FOUND')
-    }
-});
+app.listen(1488)
 
-server.listen(1488)
+
+
+
