@@ -2,6 +2,11 @@ const express = require('express')
 const users = require('./users-router')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/users');
+
+
 const app = express()
 
 app.use(cors())
