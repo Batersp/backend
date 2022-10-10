@@ -1,4 +1,4 @@
-const {addUser, getUsers} = require("./repository");
+const {addUser, getUsers, deleteUser, getUser, updateUser} = require("./repository");
 
 
 const express = require('express');
@@ -12,18 +12,14 @@ router.use(function timeLog(req, res, next) {
 // define the home page route
 
 router.get('/', async (req, res) => {
-    let users = await getUsers()
-    if(!!req.query.search) {
-        users = users.filter(el => el.name.indexOf(req.query.search) > -1)
-    }
+    let users = await getUsers(req.query.search)
     res.send(users)
 })
 
 
 router.get('/:id', async (req, res) => {
     const userId = req.params.id
-    let users = await getUsers()
-    const user = users.find(el => el.id === userId)
+    let user = await getUser(userId)
     if (user) {
         res.send(user)
     } else {
@@ -32,10 +28,23 @@ router.get('/:id', async (req, res) => {
 
 })
 
+router.delete('/:id', async (req, res) => {
+    const userId = req.params.id
+    await deleteUser(userId)
+    res.send(204)
+
+})
+
 router.post('/', async (req, res) => {
     const name = req.body.name
-    let result = await addUser(name)
+    await addUser(name)
     res.send({success: true})
+})
+
+router.put('/', async (req, res) => {
+    const id = req.body.id
+    const name = req.body.name
+    await updateUser(id, name)
 })
 
 
